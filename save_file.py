@@ -3,10 +3,10 @@ import time
 import threading
 from queue import Queue
 import datetime
-import os
+import os, sys
 import shutil
 import socket
-import sys
+
 
 ONE_MIN = 60
 ONE_HOUR = ONE_MIN * 60
@@ -26,21 +26,19 @@ def UpdateUVData():
             shutil.move(fname,"uv_data")
             print("get file : "+fname,flush=True)
             time.sleep(ONE_DAY)            #everyday
-        except socket.Timeouterror:
-            # Maybe set up for a retry, or continue in a retry loop
-            print("[UV error]socket time out! try again",flush=True)
-            time.sleep(30)
-        except TimeoutError as e:
-            # Maybe set up for a retry, or continue in a retry loop
-            print("[UV error]time out! try again",flush=True)
-            time.sleep(30)
         except urllib.error.HTTPError as e:
             # Maybe set up for a retry, or continue in a retry loop
-            print("[UV HTTP error]" + e,flush=True)
+            print("[UV HTTPerror]", flush=True)
             time.sleep(10)
         except urllib.error.URLError as e:
             # catastrophic error. bail.
-            print("[UV URL error]" + e,flush=True)
+            print("[UV URLerror]", flush=True)
+            time.sleep(10)
+        except TimeoutError as e:
+            print ("[UV Timeouterror]", flush=True)
+            time.sleep(10)
+        except:
+            print ("[UV]Unexpected Error!", flush=True)
             time.sleep(10)
 
 
@@ -58,21 +56,19 @@ def GetUbikeDataThread():
 
             print("get file : "+fname,flush=True)
             time.sleep(ONE_MIN)    #every minites
-        except socket.Timeouterror:
-            # Maybe set up for a retry, or continue in a retry loop
-            print("[Youbike error]socket time out! try again",flush=True)
-            time.sleep(30)
-        except TimeoutError as e:
-            # Maybe set up for a retry, or continue in a retry loop
-            print("[Youbike error]time out! try again",flush=True)
-            time.sleep(30)
         except urllib.error.HTTPError as e:
             # Maybe set up for a retry, or continue in a retry loop
-            print("[Youbike HTTP error]" + e,flush=True)
+            print("[Youbike HTTPerror]", flush=True)
             time.sleep(10)
         except urllib.error.URLError as e:
             # catastrophic error. bail.
-            print("[Youbike URL error]" + e,flush=True)
+            print("[Youbike URLerror]", flush=True)
+            time.sleep(10)
+        except TimeoutError as e:
+            print("[Youbike Timeouterror]", flush=True)
+            time.sleep(10)
+        except:
+            print("[Youbike]Unexpected Error!", flush=True)
             time.sleep(10)
 
 
@@ -87,7 +83,6 @@ def GetWeatherThread():
             fname = "weather_data_" + st + ".xml"
             os.rename("weather_data.xml",fname)
             shutil.move(fname,"weather_data")
-
             print("get file : "+fname,flush=True)
             time.sleep(ONE_HOUR) #every hour
         except socket.Timeouterror:
@@ -100,11 +95,11 @@ def GetWeatherThread():
             time.sleep(30)
         except urllib.error.HTTPError as e:
             # Maybe set up for a retry, or continue in a retry loop
-            print("[Weather HTTP error]" + e,flush=True)
+            print("[Weather HTTP error]",flush=True)
             time.sleep(10)
         except urllib.error.URLError as e:
             # catastrophic error. bail.
-            print("[Weather URL error]" + e,flush=True)
+            print("[Weather URL error]",flush=True)
             time.sleep(10)
 
 
@@ -122,21 +117,19 @@ def GetAQIThread():
 
             print("get file : "+fname,flush=True)
             time.sleep(ONE_HOUR)
-        except socket.Timeouterror:
-            # Maybe set up for a retry, or continue in a retry loop
-            print("[AQI error]socket time out! try again",flush=True)
-            time.sleep(30)
-        except TimeoutError as e:
-            # Maybe set up for a retry, or continue in a retry loop
-            print("[AQI error]time out! try again",flush=True)
-            time.sleep(30)
         except urllib.error.HTTPError as e:
             # Maybe set up for a retry, or continue in a retry loop
-            print("[AQI HTTP error]" + e,flush=True)
+            print("[AQI HTTPerror]", flush=True)
             time.sleep(10)
         except urllib.error.URLError as e:
             # catastrophic error. bail.
-            print("[AQI URL error]" + e,flush=True)
+            print("[AQI URLerror]", flush=True)
+            time.sleep(10)
+        except TimeoutError as e:
+            print("[AQI Timeouterror]", flush=True)
+            time.sleep(10)
+        except:
+            print("[AQI]Unexpected Error!", flush=True)
             time.sleep(10)
 
 
@@ -154,21 +147,19 @@ def GetAirboxThread():
             print("get file : "+fname,flush=True)
             time.sleep(ONE_HOUR) #every hour
 
-        except socket.Timeouterror:
-            # Maybe set up for a retry, or continue in a retry loop
-            print("[AQI error]socket time out! try again",flush=True)
-            time.sleep(30)
-        except TimeoutError as e:
-            # Maybe set up for a retry, or continue in a retry loop
-            print("[AQI error]time out! try again",flush=True)
-            time.sleep(30)
         except urllib.error.HTTPError as e:
             # Maybe set up for a retry, or continue in a retry loop
-            print("[AQI HTTP error]" + e,flush=True)
+            print("[Airbox HTTPerror]", flush=True)
             time.sleep(10)
         except urllib.error.URLError as e:
             # catastrophic error. bail.
-            print("[AQI URL error]" + e,flush=True)
+            print("[Airbox URLerror]", flush=True)
+            time.sleep(10)
+        except TimeoutError as e:
+            print("[Airbox Timeouterror]", flush=True)
+            time.sleep(10)
+        except:
+            print("[Airbox]Unexpected Error!", flush=True)
             time.sleep(10)
 
 
@@ -177,22 +168,22 @@ if __name__ == "__main__":
 
     print ("Starting...",flush=True)
     #create thread
-    #uv_thread = threading.Thread(target = UpdateUVData)
+    uv_thread = threading.Thread(target = UpdateUVData)
     ubike_thread = threading.Thread(target = GetUbikeDataThread)
-    #aqi_thread = threading.Thread(target = GetAQIThread)
-    #airbox_thread = threading.Thread(target = GetAirboxThread)
-    #weather_thread = threading.Thread(target = GetWeatherThread)
+    aqi_thread = threading.Thread(target = GetAQIThread)
+    airbox_thread = threading.Thread(target = GetAirboxThread)
+    weather_thread = threading.Thread(target = GetWeatherThread)
 
-    #uv_thread.start()
+    uv_thread.start()
     ubike_thread.start()
-    #aqi_thread.start()
-    #airbox_thread.start()
-    #weather_thread.start()
+    aqi_thread.start()
+    airbox_thread.start()
+    weather_thread.start()
 
-    #uv_thread.join()
+    uv_thread.join()
     ubike_thread.join()
-    #aqi_thread.join()
-    #airbox_thread.join()
-    #weather_thread.join()
+    aqi_thread.join()
+    airbox_thread.join()
+    weather_thread.join()
 
     print ("Finished",flush=True)
